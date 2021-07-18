@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% if film %}
+
+    <h3>{{film.title}}</h3>
+    <hr>
+    Yazar : {{film.author}}
+    <hr>
+    Tarih : {{film.created_date}}
+    <hr>
+    {{film.content|safe}}
+    <hr>
+
+    {% if comments %}
+
+        {% for comment in comments %}
+
+                <div class="media mb-4">
+                    <div class="media-body">    
+                      <h5>{{comment.comment_author}}</h5>
+                      <small>yorum tarihi :</small>  {{comment.comment_date}}
+                      <br>
+                      <small>yorum :</small>  {{comment.comment_content}}
+                    </div>
+                </div>
+
+        {% endfor %}
+    
+        
+        {% else %}
+        <div class="alert alert-danger">
+            Bu filme yorum yazılmamış..
+        </div>
+        {% endif %}
+    <!-- Comments Form -->
+         <div class="card my-4">
+          <h5 class="card-header">Yorum Ekleyin</h5>
+          <div class="card-body">
+            <form method="post" action="/comment">
+
+            <div class="form-group">
+               <label for="formGroupExampleInput">İsim</label>
+               <input name="comment_author" type="text" class="form-control" id="formGroupExampleInput" placeholder="isminizi girin">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput">Yorum</label>
+                <textarea name="comment_content" class="form-control" rows="3"></textarea>
+            </div>
+              <button type="submit" class="btn btn-info ">Ekle</button>
+            </form>
+          </div>
+        </div>
+
+    
+{% else %}
+<div class="alert alert-warning">Böyle bir film bulunmuyor..!</div>
+
+{% endif %}
+
+
+{% endblock body %}

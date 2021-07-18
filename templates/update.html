@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h4>Film Güncelleme</h4>
+<hr>
+{% from "includes/formhelpers.html" import render_field %}
+
+<form method="post">
+
+    {{ render_field(form.title,class="form-control") }}
+    {{ render_field(form.content,class="form-control") }}
+    <br>
+    <button type="submit" class="btn btn-danger">Filmi Güncelle</button>
+
+</form>
+
+{% endblock body %}

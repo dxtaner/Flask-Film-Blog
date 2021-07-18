@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h3>Filmler</h3>
+<hr>
+
+{% if filmler %}
+<form action="/search" method="post">
+    <div class="active-pink-3 active-purple-4 mb-4">
+        <input class="form-control" name="keyword" type="text" placeholder="film araa..." aria-label="Search">
+    </div>
+    <button type="submit" class="btn btn-outline-danger btn-lg btn-block">Film Ara</button>
+</form>
+<hr>
+
+<ul class="list-group">
+    {% for film in filmler  %}
+            <li class="list-group-item"><a href="/film/{{film.id}}">{{film.title}} </a></li>
+    {% endfor %}
+</ul>
+{% else %}
+    <div class="alert alert-danger">
+    Bu blogda film bulunmuyor
+    </div>
+{% endif %}
+
+{% endblock body %}
