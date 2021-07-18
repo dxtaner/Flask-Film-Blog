@@ -80,8 +80,8 @@ def login():
         if deger>0:
             data = cursor.fetchone()
             real_password = data["password"]
-            if sha256_crypt.verify(password_entered,str(real_password)):
-                app.logger.info('password match')
+            if sha256_crypt.verify((password_entered),real_password):
+                print(real_password)
                 flash("Giriş İşlemi Başarılı","success")
 
                 session["logged_in"]=True
@@ -103,7 +103,6 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
-
 #index sayfasi
 @app.route("/")
 def index():
@@ -115,78 +114,19 @@ def about():
     return render_template("hakkimda.html")
 
 #kontrol paneli sayfasi
-@app.route("/dasboard")
+@app.route("/dashboard")
 @login_required
-def dasboard():
+def dashboard():
     cursor = mysql.connection.cursor()
     sorgu = "Select * From filmler where author = %s"
     deger = cursor.execute(sorgu,(session["username"],))
 
     if deger>0:
         filmler = cursor.fetchall()
-        return render_template("dasboard.html",filmler=filmler)
+        return render_template("dashboard.html",filmler=filmler)
     else:    
-        return render_template("dasboard.html")
-
-
-
-#yorum ekleme
-@app.route("/comment",methods=["GET","POST"])
-def addcomment(id):
-
-
-    if request.method=="GET":
-        return redirect(url_for("index"))
-    else:
-        comment_author = request.form.get("comment_author")
-
-        comment_content = request.form.get("comment_content")
+        return render_template("dashboard.html")
         
-        cursor = mysql.connection.cursor()
-
-        sorgu ="Insert into yorumlar (comment_author,comment_content) VALUES(%s,%s)"
-        cursor.execute(sorgu,(comment_author,comment_content))
-        
-        mysql.connection.commit()
-        cursor.close()
-
-        flash("Oluşturduğun yorum eklendi..","success")
-            
-        return redirect(url_for("filmler"))
-
-    return render_template("filmler.html",filmler=filmler,id=id)
-    
-    
-###yorumlar sayfasi
-@app.route("/comments")
-def comment():
-    
-    cursor = mysql.connection.cursor()
-    
-    sorgu ="Select * from yorumlar"
-    deger = cursor.execute(sorgu)
-
-    if deger > 0:
-        yorumlar = cursor.fetchall()
-        return render_template("comments.html",comment=yorumlar)
-    else :
-        return render_template("comments.html") 
-
-## yorumlar detay
-@app.route("/comment/<string:id>")
-def commentss(id):
-
-    cursor = mysql.connection.cursor()
-    
-    sorgu ="Select * From yorumlar where id = %s"
-    deger = cursor.execute(sorgu,(id,))
-    
-    if deger >0 :
-        yorum = cursor.fetchone()
-        return render_template("comment.html",yorum=yorum)
-    else:    
-        return render_template("comment.html")
-
 #film form
 class FilmForm(Form):
     title = StringField("Film Başlığı",validators=[validators.Length(min=3,max=85)])
@@ -212,7 +152,7 @@ def addfilm():
 
         flash("Oluşturduğun film eklendi..","success")
 
-        return redirect(url_for("dasboard"))
+        return redirect(url_for("dashboard"))
 
     return render_template("addfilm.html",form=form)
 
@@ -258,7 +198,7 @@ def delete(id):
         sorgu2="Delete from filmler where id = %s"
         cursor.execute(sorgu2,(id,))
         mysql.connection.commit()
-        return redirect(url_for("dasboard"))
+        return redirect(url_for("dashboard"))
     else:
         flash("Bu filmi silme yetkiniz yoktur","warning") 
         return redirect(url_for("index"))
@@ -299,7 +239,7 @@ def guncelleme(id):
 
         flash("Film Güncellendi..","success")
 
-        return redirect(url_for("dasboard"))
+        return redirect(url_for("dashboard"))
 
 #film arama url 
 @app.route("/search",methods=["GET","POST"])
